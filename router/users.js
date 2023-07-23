@@ -1,6 +1,7 @@
 import express from "express";
 import { body } from "express-validator"; //validate할 대상
 import * as usersController from "../controller/users.js";
+import { isAuth } from "../middleware/users.js";
 const router = express.Router();
 const validateCredential = [
   body("userId")
@@ -26,4 +27,5 @@ router.post("/signup", validateSignup, usersController.signup);
 
 router.post("/login", validateCredential, usersController.login);
 
+router.get("/me", isAuth, usersController.me);
 export default router;

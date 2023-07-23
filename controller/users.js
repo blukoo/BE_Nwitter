@@ -41,3 +41,10 @@ export async function signup(req, res) {
   const token = createJwtToken(userInfo);
   res.status(201).json({ token, userId });
 }
+export async function me(req, res, next) {
+  const user = await userRepository.findUserId(req.userInfo.userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  return res.status(200).json({ token: req.token, userInfo: user });
+}

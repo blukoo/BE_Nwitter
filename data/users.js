@@ -5,6 +5,12 @@ export async function findUserId(id) {
     .execute("SELECT * FROM users WHERE userId=?", [id])
     .then((res) => res[0][0]);
 }
+export async function findId(id) {
+  let res = await db.execute("SELECT * FROM users WHERE id=?", [id]);
+  return await db
+    .execute("SELECT * FROM users WHERE id=?", [id])
+    .then((res) => res[0][0]);
+}
 export async function createUser(user) {
   const { userId, password, name, email, url } = user;
   return db
