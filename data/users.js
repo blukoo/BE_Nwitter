@@ -12,11 +12,12 @@ export async function findId(id) {
     .then((res) => res[0][0]);
 }
 export async function createUser(user) {
-  const { userId, password, name, email, url } = user;
+  const { userId, password, name, email, url, nickname } = user;
+  console.log(user,"user")
   return db
     .execute(
-      "INSERT INTO users (userId, password, name, email, url) VALUES (?,?,?,?,?)",
-      [userId, password, name, email, url]
+      "INSERT INTO users (userId, password, name, email, url, nickname) VALUES (?,?,?,?,?,?)",
+      [userId, password, name, email, url, nickname]
     )
     .then((res) => res[0].insertId);
 }

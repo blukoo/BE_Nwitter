@@ -26,6 +26,7 @@ const validateSignup = [
 router.post("/signup", validateSignup, usersController.signup);
 
 router.post("/login", validateCredential, usersController.login);
-
+router.post("/kakao_login", validateCredential, usersController.kakaoLogin);
+router.get("/find_user", usersController.findUser);
 router.get("/me", isAuth, usersController.me);
 export default router;

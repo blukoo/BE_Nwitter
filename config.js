@@ -16,4 +16,8 @@ export const config = {
     database: process.env.DB_DATABASE,
     port: process.env.DB_PORT,
   },
+  kakao: {
+    key: process.env.KAKAO_KEY,
+    redirect_url: process.env.KAKAO_REDIRECT_URL,
+  },
 };
