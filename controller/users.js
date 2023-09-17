@@ -96,3 +96,11 @@ export async function findUser(req, res, next) {
   }
   return res.status(200).json({ token: req.token, userInfo: user });
 }
+export async function findKakaoUser(req, res, next) {
+  console.log(req, req.userId, req.userInfo, req.query.kakaoId, "11111");
+  const user = await userRepository.findByKakaoId(req.query.kakaoId);
+  if (!user) {
+    return res.status(200).json({ userInfo: { userId: null } });
+  }
+  return res.status(200).json({ token: req.token, userInfo: user });
+}
