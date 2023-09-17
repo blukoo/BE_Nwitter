@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan"; //log 제공용
 import helmet from "helmet";
 import usersRoute from "./router/users.js";
+import { sequelize } from "./db/database.js";
 const app = express();
 app.use(express.json());
 app.use(helmet());
@@ -18,6 +19,9 @@ app.use((error, req, res, next) => {
   console.error(error, "err");
   res.sendStatus(500);
 });
+sequelize.sync().then(client=>{
+  console.log(client,"client")
+})
 app.listen(8080, (PORT) => {
   console.log(`Server running on port ${PORT}`);
 });
