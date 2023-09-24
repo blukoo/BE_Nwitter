@@ -28,7 +28,7 @@ export const User = sequelize.define(
     },
     url: DataTypes.TEXT,
     nickname: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(45),
       allowNull: false,
     },
     kakaoId: DataTypes.TEXT,

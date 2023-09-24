@@ -14,7 +14,7 @@ export const isAuth = async (req, res, next) => {
       return res.status(401).json(AUTH_ERROR);
     }
     //없다면 decoded된 id로 회원을 찾음
-    const user = await userRepository.findId(decoded.id);
+    const user = await userRepository.findById(decoded.id);
     if (!user) {
       return res.status(401).json(AUTH_ERROR + "??");
     }

@@ -69,7 +69,7 @@ export async function kakaoSignup(req, res) {
   if (!found) {
     const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
     const userInfo = await userRepository.createUser({
-      userId,
+      userId:email,
       password: hashed,
       name,
       email,

@@ -47,8 +47,9 @@ export async function getAll() {
 export async function getAllByNickname(nickname) {
   console.log(nickname,"nick")
   return Tweet.findAll({
+    // ...INCLUDE_USER,
     ...ORDER_DESC,
-    include:{ ...INCLUDE_USER, where: { nickname } },
+    include:{ ...INCLUDE_USER.include, where: { nickname } },
   });
 }
 // GET /tweets/:id
