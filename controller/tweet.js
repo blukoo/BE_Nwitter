@@ -1,9 +1,9 @@
 import * as tweetRepository from "../data/tweet.js";
 export async function getTweets(req, res) {
   console.log(req.query,"@@@")
-  const nickname = req.query.nickname;
-  const data = await (nickname
-    ? tweetRepository.getAllByNickname(nickname)
+  const userId = req.query.userId;
+  const data = await (userId
+    ? tweetRepository.getAllByUserId(userId)
     : tweetRepository.getAll());
   res.status(200).json(data);
 }

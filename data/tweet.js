@@ -1,7 +1,7 @@
 import { db } from "../db/database.js";
 import SQ from "sequelize";
 import { sequelize } from "../db/database.js";
-import { User } from "./users.js";
+import { User,findByUserId } from "./users.js";
 const DataTypes = SQ.DataTypes;
 const Sequelize = SQ.Sequelize;
 const Tweet = sequelize.define("tweet", {
@@ -29,11 +29,17 @@ const INCLUDE_USER = {
     [Sequelize.col("user.name"), "name"],
     [Sequelize.col("user.nickname"), "nickname"],
     [Sequelize.col("user.url"), "url"],
-  ],
+  ], 
   include: {
     model: User,
-    attributes: [],
-    required: false,
+    attributes: [
+      // "name",
+      // "nickname",
+      // "url",
+      
+    ],
+    // attributes: ["name","nickname"],
+    // required: false,
   },
 };
 
@@ -47,9 +53,25 @@ export async function getAll() {
 export async function getAllByNickname(nickname) {
   console.log(nickname,"nick")
   return Tweet.findAll({
-    // ...INCLUDE_USER,
+    ...INCLUDE_USER,
     ...ORDER_DESC,
-    include:{ ...INCLUDE_USER.include, where: { nickname } },
+    include:{ ...INCLUDE_USER.include,
+      where: { nickname } 
+    },
+  });
+}
+export async function getAllByUserId(userId) {
+  const user = new User()
+  
+  console.log(user.findByUserId,"@")
+  let id =(await findByUserId(userId)).dataValues.id;
+  console.log(userId,id,"nick")
+  return Tweet.findAll({
+    ...INCLUDE_USER,
+    ...ORDER_DESC,
+    include:{ ...INCLUDE_USER.include,
+      where: { userId }
+    },
   });
 }
 // GET /tweets/:id

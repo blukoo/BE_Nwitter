@@ -11,7 +11,7 @@ function createJwtToken(id) {
   });
 }
 export async function login(req, res) {
-  const { userId, password } = req.body;
+  const { userId, password, nickname, url, email } = req.body;
   console.log(userId, password, "@@@@@@@@@");
   const user = await userRepository.findByUserId(userId);
   if (!user) {
@@ -23,7 +23,7 @@ export async function login(req, res) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
   const token = createJwtToken(user.id);
-  res.status(200).json({ token, userId });
+  res.status(200).json({ token, nickname:user.nickname, url:user.url, email:user.email, userId: user.userId });
 }
 
 export async function kakaoLogin(req, res) {
@@ -39,7 +39,7 @@ export async function kakaoLogin(req, res) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
   const token = createJwtToken(user.id);
-  res.status(200).json({ token, kakaoId });
+  res.status(200).json({ token, kakaoId, nickname:user.nickname, url:user.url, email:user.email, userId: user.email });
 }
 export async function signup(req, res) {
   let { userId, password, name, email, url, nickname, kakaoId } = req.body;
@@ -69,7 +69,7 @@ export async function kakaoSignup(req, res) {
   if (!found) {
     const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
     const userInfo = await userRepository.createUser({
-      userId:email,
+      userId: email,
       password: hashed,
       name,
       email,
