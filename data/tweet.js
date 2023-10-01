@@ -24,6 +24,7 @@ const INCLUDE_USER = {
   attributes: [
     "id",
     "text",
+    "image",
     "createdAt",
     "userId",
     [Sequelize.col("user.name"), "name"],
