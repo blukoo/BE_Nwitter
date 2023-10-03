@@ -14,6 +14,7 @@ app.use(morgan("tiny"));
 
 app.use("/tweets", tweetsRoute);
 app.use("/users", usersRoute);
+app.use('/upload/image/', express.static('upload/image/'))
 app.use((req, res, next) => {
   res.sendStatus(404);
 });

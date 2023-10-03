@@ -86,7 +86,7 @@ export async function getById(id) {
 }
 
 // POST /tweeets
-export async function create(text, userId) {
+export async function create(text,userId) {
   return Tweet.create({ text, userId }).then((data) => {
     console.log(data, "data");
     return data;
@@ -99,6 +99,14 @@ export async function update(id, text) {
   return Tweet.findByPk(id, INCLUDE_USER) //
     .then((tweet) => {
       tweet.text = text;
+      return tweet.save();
+    });
+}
+export async function updateImage(id, image) {
+  console.log(image,"sss")
+  return Tweet.findByPk(id, INCLUDE_USER) //
+    .then((tweet) => {
+      tweet.image = image;
       return tweet.save();
     });
 }
