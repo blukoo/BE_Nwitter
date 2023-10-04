@@ -12,8 +12,8 @@ function createJwtToken(id) {
 }
 export async function login(req, res) {
   const { userId, password, nickname, url, email } = req.body;
-  console.log(userId, password, "@@@@@@@@@");
   const user = await userRepository.findByUserId(userId);
+  console.log(userId, password,user, "@@@@@@@@@");
   if (!user) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
@@ -23,7 +23,7 @@ export async function login(req, res) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
   const token = createJwtToken(user.id);
-  res.status(200).json({ token, nickname:user.nickname, url:user.url, email:user.email, userId: user.userId });
+  res.status(200).json({ token, ...user.dataValues });
 }
 
 export async function kakaoLogin(req, res) {
@@ -39,7 +39,7 @@ export async function kakaoLogin(req, res) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
   const token = createJwtToken(user.id);
-  res.status(200).json({ token, kakaoId, nickname:user.nickname, url:user.url, email:user.email, userId: user.email });
+  res.status(200).json({ token, kakaoId, ...user.dataValues, userId: user.email });
 }
 export async function signup(req, res) {
   let { userId, password, name, email, url, nickname, kakaoId } = req.body;
@@ -83,6 +83,7 @@ export async function kakaoSignup(req, res) {
 }
 export async function me(req, res, next) {
   const user = await userRepository.findById(req.userId);
+  console.log(req, req.userId, req.userInfo, user, "11111");
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
