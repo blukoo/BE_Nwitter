@@ -1,5 +1,6 @@
 import * as tweetRepository from "../data/tweet.js";
-import { upload } from "../middleware/uploadImage.js";
+import { getSocketIO } from '../connection/socket.js';
+
 export async function getTweets(req, res) {
   console.log(req.query, "@@@");
   const userId = req.query.userId;
@@ -22,6 +23,7 @@ export async function createTweet(req, res) {
   console.log(image, text);
   const tweet = await tweetRepository.create(text, req.userInfo.id);
   res.status(201).json(tweet);
+  getSocketIO().emit('getTweets', tweet);
 }
 export async function updateTweet(req, res) {
   const { id } = req.params;
@@ -36,6 +38,7 @@ export async function updateTweet(req, res) {
   }
   const updated = await tweetRepository.update(id, text);
   res.status(200).json(updated);
+  getSocketIO().emit('getTweets', tweet);
 }
 export async function updateTweetImage(req, res) {
   const { id } = req.params;
@@ -46,6 +49,7 @@ export async function updateTweetImage(req, res) {
   console.log(req.file,req.image, req.body.image,req.body.file, "Wwww");
   const updated = await tweetRepository.updateImage(id, `/upload/image/${req.file.filename}`);
   res.status(200).json(updated);
+  getSocketIO().emit('getTweets', tweet);
 }
 export async function deleteTweet(req, res, next) {
   const { id } = req.params;
@@ -57,4 +61,5 @@ export async function deleteTweet(req, res, next) {
   }
   await tweetRepository.remove(id);
   res.sendStatus(204);
+  getSocketIO().emit('getTweets', tweet);
 }
