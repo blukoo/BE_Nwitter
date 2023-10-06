@@ -32,9 +32,7 @@ class Socket {
 }
 let socket;
 export function initSocket(server) {
-  console.log("tt11");
   if (!socket) {
-    console.log("tt22");
     socket = new Socket(server);
   }
 }

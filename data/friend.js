@@ -25,15 +25,10 @@ const Friend = sequelize.define("friend", {
     allowNull: false,
   },
 });
-Friend.belongsTo(User,{as:"requestFriend"});
-Friend.belongsTo(User,{as:"replyFriend"});
+Friend.belongsTo(User, { as: "requestFriend" });
+Friend.belongsTo(User, { as: "replyFriend" });
 const INCLUDE_USER = {
-  attributes: [
-    "requestFriendId",
-    "replyFriendId",
-    "isFriend",
-    "createdAt",
-  ],
+  attributes: ["id","requestFriendId", "replyFriendId", "isFriend", "createdAt"],
   include: [
     {
       model: User,
@@ -58,8 +53,8 @@ export async function getById(id) {
   });
 }
 export async function getFriend(id) {
-  console.log(id,"ddddd")
-  console.log(id,Friend,"ddddd")
+  console.log(id, "ddddd");
+  console.log(id, Friend, "ddddd");
   return Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -70,32 +65,44 @@ export async function getFriend(id) {
   });
 }
 export async function getRequestFriend(id) {
-  console.log(id,Friend,"ddddd")
+  console.log(id, Friend, "ddddd");
   return Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
-    where: 
+    where:
       // [Op.or]: [{ requestFriendId: id }, { replyFriendId: id }],
-      { requestFriendId: id },
-    
+      {
+        isFriend: false,
+        requestFriendId: id,
+      },
   });
 }
 export async function getReplyFriend(id) {
-  console.log(id,Friend,"ddddd")
+  console.log(id, Friend, "ddddd");
   return Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
-    where: 
+    where:
       // [Op.or]: [{ requestFriendId: id }, { replyFriendId: id }],
-      { replyFriendId: id },
-    
+      {
+        isFriend: false,
+        replyFriendId: id,
+      },
   });
 }
 export async function insertFriend(requestFriendId, replyFriendId, isFriend) {
-  console.log(requestFriendId, replyFriendId, isFriend,{requestFriendId, replyFriendId, isFriend},"requestFriend, replyFriend, isFrien11")
-  return Friend.create({requestFriendId, replyFriendId, isFriend}).then(data=>{
-    return data
-  }).then(data=>this.getById(data.dataValues.id))
+  console.log(
+    requestFriendId,
+    replyFriendId,
+    isFriend,
+    { requestFriendId, replyFriendId, isFriend },
+    "requestFriend, replyFriend, isFrien11"
+  );
+  return Friend.create({ requestFriendId, replyFriendId, isFriend })
+    .then((data) => {
+      return data;
+    })
+    .then((data) => this.getById(data.dataValues.id));
 }
 // PUT /tweets/:id
 

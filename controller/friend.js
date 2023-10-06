@@ -25,6 +25,7 @@ export async function getReplyFriend(req, res) {
   }
 }
 export async function insertFriend(req, res) {
+  const { id } = req.params;
   const { requestFriendId, replyFriendId, isFriend } = req.body;
   console.log(
     requestFriendId,
@@ -41,7 +42,8 @@ export async function insertFriend(req, res) {
   // getSocketIO().emit('getfriends', friend);
 }
 export async function updateFriend(req, res) {
-  const { id, isFriend } = req.body;
+  const { id } = req.params;
+  const { isFriend } = req.body;
   const friend = await friendRepository.getById(id);
   if (!friend) {
     return res.status(404).json({ message: `friend not found : ${id}` });
