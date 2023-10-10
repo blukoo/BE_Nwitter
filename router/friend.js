@@ -15,12 +15,13 @@ router.get("/request", isAuth, friendController.getRequestFriend);
 router.get("/reply", isAuth, friendController.getReplyFriend);
 
 // POST /tweeets
-router.post("/:id", isAuth, friendController.insertFriend);
+router.post("/", isAuth, friendController.insertFriend);
 
 // PUT /tweets/:id
 router.put("/:id", isAuth, friendController.updateFriend);
 
 // DELETE /tweets/:id
 router.delete("/:id", isAuth, friendController.deleteFriend);
+router.get("/find_user_by_nickname", isAuth, friendController.getNotConnectFriend);
 
 export default router;

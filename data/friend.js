@@ -28,7 +28,13 @@ const Friend = sequelize.define("friend", {
 Friend.belongsTo(User, { as: "requestFriend" });
 Friend.belongsTo(User, { as: "replyFriend" });
 const INCLUDE_USER = {
-  attributes: ["id","requestFriendId", "replyFriendId", "isFriend", "createdAt"],
+  attributes: [
+    "id",
+    "requestFriendId",
+    "replyFriendId",
+    "isFriend",
+    "createdAt",
+  ],
   include: [
     {
       model: User,
@@ -64,6 +70,22 @@ export async function getFriend(id) {
     },
   });
 }
+
+export async function getConnectFriend(id, myId) {
+  console.log(id, "ddddd");
+  console.log(id, myId, "ddddd");
+  return await Friend.findAll({
+    ...INCLUDE_USER,
+    ...ORDER_DESC,
+    where: {
+      // isFriend: true,
+      [Op.and]: [
+        { requestFriendId: { [Op.or]: [id, myId] } },
+        { replyFriendId: { [Op.or]: [id, myId] } },
+      ],
+    },
+  });
+}
 export async function getRequestFriend(id) {
   console.log(id, Friend, "ddddd");
   return Friend.findAll({
@@ -90,15 +112,13 @@ export async function getReplyFriend(id) {
       },
   });
 }
-export async function insertFriend(requestFriendId, replyFriendId, isFriend) {
+export async function insertFriend(requestFriendId, replyFriendId) {
   console.log(
     requestFriendId,
     replyFriendId,
-    isFriend,
-    { requestFriendId, replyFriendId, isFriend },
     "requestFriend, replyFriend, isFrien11"
   );
-  return Friend.create({ requestFriendId, replyFriendId, isFriend })
+  return Friend.create({ requestFriendId, replyFriendId, isFriend: false })
     .then((data) => {
       return data;
     })
@@ -120,4 +140,22 @@ export async function deleteFriend(id) {
     .then((friend) => {
       friend.destroy();
     });
+}
+export async function getNotConnectFriend(nickname, myId) {
+  console.log(nickname, "Ssss");
+  let users = await User.findAll({
+    where: {
+      id: { [Op.not]: myId },
+      nickname: { [Op.like]: "%" + nickname + "%" },
+    },
+  });
+  let arr = [];
+  for (let i = 0; i < users.length; i++) {
+    let value = await getConnectFriend(users[i].id, myId);
+    console.log(value, users[i].dataValues, "벨류");
+    if (!value.length) {
+      arr.push(users[i].dataValues);
+    }
+  }
+  return arr;
 }
