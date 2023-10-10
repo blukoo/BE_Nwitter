@@ -37,7 +37,7 @@ export async function insertFriend(req, res) {
     replyFriendId
   );
   res.status(201).json(friend);
-  // getSocketIO().emit('getfriends', friend);
+  getSocketIO().emit("changedFriend", friend);
 }
 export async function updateFriend(req, res) {
   const { id } = req.params;
@@ -48,7 +48,7 @@ export async function updateFriend(req, res) {
   }
   const updated = await friendRepository.updateFriend(id, isFriend);
   res.status(200).json(updated);
-  // getSocketIO().emit("getfriends", tweet);
+  getSocketIO().emit("changedFriend", friend);
 }
 export async function deleteFriend(req, res, next) {
   const { id } = req.params;
@@ -59,7 +59,7 @@ export async function deleteFriend(req, res, next) {
   }
   await friendRepository.deleteFriend(id);
   res.sendStatus(204);
-  // getSocketIO().emit("getTweets", tweet);
+  getSocketIO().emit("changedFriend", friend);
 }
 //유저랑은 다르게 친구요청이 있는 사용자는 나오지 않도록
 export async function getNotConnectFriend(req, res, next) {

@@ -15,7 +15,7 @@ class Socket {
       }
       jwt.verify(token, config.jwt.secretKey, (error, decoded) => {
         if (error) {
-          return next(new Error("Authentication Error"));
+          return next(new Error("Authentication Erroraaaaaa"));
         }
         next();
       });
@@ -26,6 +26,9 @@ class Socket {
       });
       socket.on("saveTweets", (socket) => {
         console.log("tweetssocket");
+      });
+      socket.on("changeFriend", (socket) => {
+        console.log("friendsocket");
       });
     });
   }
