@@ -24,7 +24,7 @@ export async function getReplyFriend(req, res) {
     res.status(404).json({ message: `확인해주세요` });
   }
 }
-export async function insertFriend(req, res) {
+export async function createFriend(req, res) {
   const { id } = req.params;
   const { requestFriendId, replyFriendId } = req.body;
   console.log(
@@ -32,7 +32,7 @@ export async function insertFriend(req, res) {
     replyFriendId,
     "requestFriendId, replyFriendId, isFriend"
   );
-  const friend = await friendRepository.insertFriend(
+  const friend = await friendRepository.createFriend(
     requestFriendId,
     replyFriendId
   );

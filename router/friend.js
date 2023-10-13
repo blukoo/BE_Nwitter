@@ -15,7 +15,7 @@ router.get("/request", isAuth, friendController.getRequestFriend);
 router.get("/reply", isAuth, friendController.getReplyFriend);
 
 // POST /tweeets
-router.post("/", isAuth, friendController.insertFriend);
+router.post("/", isAuth, friendController.createFriend);
 
 // PUT /tweets/:id
 router.put("/:id", isAuth, friendController.updateFriend);

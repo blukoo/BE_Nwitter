@@ -1,4 +1,3 @@
-import { db } from "../db/database.js";
 import SQ from "sequelize";
 import { sequelize } from "../db/database.js";
 import { User, findByUserId } from "./users.js";
@@ -38,12 +37,12 @@ const INCLUDE_USER = {
   include: [
     {
       model: User,
-      attributes: ["id", "nickname"],
+      // attributes: ["id", "nickname"],
       as: "requestFriend",
     },
     {
       model: User,
-      attributes: ["id", "nickname"],
+      // attributes: ["id", "nickname"],
       as: "replyFriend",
     },
   ],
@@ -112,7 +111,7 @@ export async function getReplyFriend(id) {
       },
   });
 }
-export async function insertFriend(requestFriendId, replyFriendId) {
+export async function createFriend(requestFriendId, replyFriendId) {
   console.log(
     requestFriendId,
     replyFriendId,
