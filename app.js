@@ -6,6 +6,7 @@ import helmet from "helmet";
 import usersRoute from "./router/users.js";
 import tweetsRoute from "./router/tweets.js";
 import friendRoute from "./router/friend.js";
+import chatRoute from "./router/chat.js";
 import { sequelize } from "./db/database.js";
 import { initSocket } from "./connection/socket.js";
 const app = express();
@@ -28,6 +29,7 @@ app.use("/tweets", tweetsRoute);
 app.use("/users", usersRoute);
 app.use("/friend", friendRoute);
 app.use("/upload/image/", express.static("upload/image/"));
+app.use("/chat", chatRoute);
 app.use((req, res, next) => {
   res.sendStatus(404);
 });
