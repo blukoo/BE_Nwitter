@@ -4,7 +4,7 @@ import { User, findByUserId } from "./users.js";
 const DataTypes = SQ.DataTypes;
 const Sequelize = SQ.Sequelize;
 const Op = Sequelize.Op;
-const Friend = sequelize.define("friend", {
+export const Friend = sequelize.define("friend", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -37,12 +37,12 @@ const INCLUDE_USER = {
   include: [
     {
       model: User,
-      // attributes: ["id", "nickname"],
+      attributes: ["id", "nickname"],
       as: "requestFriend",
     },
     {
       model: User,
-      // attributes: ["id", "nickname"],
+      attributes: ["id", "nickname"],
       as: "replyFriend",
     },
   ],
