@@ -52,7 +52,6 @@ export async function getAll() {
   return Tweet.findAll({ ...INCLUDE_USER, ...ORDER_DESC });
 }
 export async function getAllByNickname(nickname) {
-  console.log(nickname,"nick")
   return Tweet.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -64,9 +63,7 @@ export async function getAllByNickname(nickname) {
 export async function getAllByUserId(userId) {
   const user = new User()
   
-  console.log(user.findByUserId,"@")
   let id =(await findByUserId(userId)).dataValues.id;
-  console.log(userId,id,"nick")
   return Tweet.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -88,7 +85,6 @@ export async function getById(id) {
 // POST /tweeets
 export async function create(text,userId) {
   return Tweet.create({ text, userId }).then((data) => {
-    console.log(data, "data");
     return data;
   }).then(data=>this.getById(data.dataValues.id));
 }
@@ -103,7 +99,6 @@ export async function update(id, text) {
     });
 }
 export async function updateImage(id, image) {
-  console.log(image,"sss")
   return Tweet.findByPk(id, INCLUDE_USER) //
     .then((tweet) => {
       tweet.image = image;

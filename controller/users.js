@@ -10,10 +10,10 @@ function createJwtToken(id) {
     expiresIn: config.jwt.expireInSec,
   });
 }
+
 export async function login(req, res) {
   const { userId, password, nickname, url, email } = req.body;
   const user = await userRepository.findByUserId(userId);
-  console.log(userId, password,user, "@@@@@@@@@");
   if (!user) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
@@ -28,7 +28,6 @@ export async function login(req, res) {
 
 export async function kakaoLogin(req, res) {
   const { kakaoId, password } = req.body;
-  console.log(kakaoId, password, "@@@@@@@@@");
   const user = await userRepository.findByKakaoId(kakaoId);
   if (!user) {
     return res.status(401).json({ message: "Invalid user or password" });
@@ -39,7 +38,9 @@ export async function kakaoLogin(req, res) {
     return res.status(401).json({ message: "Invalid user or password" });
   }
   const token = createJwtToken(user.id);
-  res.status(200).json({ token, kakaoId, ...user.dataValues, userId: user.email });
+  res
+    .status(200)
+    .json({ token, kakaoId, ...user.dataValues, userId: user.email });
 }
 export async function signup(req, res) {
   let { userId, password, name, email, url, nickname, kakaoId } = req.body;
@@ -83,14 +84,12 @@ export async function kakaoSignup(req, res) {
 }
 export async function me(req, res, next) {
   const user = await userRepository.findById(req.userId);
-  console.log(req, req.userId, req.userInfo, user, "11111");
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
   return res.status(200).json({ token: req.token, userInfo: user });
 }
 export async function findUser(req, res, next) {
-  console.log(req, req.userId, req.userInfo, req.query.userId, "11111");
   const user = await userRepository.findById(req.query.userId);
   if (!user) {
     return res.status(200).json({ userInfo: { userId: null } });
@@ -98,7 +97,6 @@ export async function findUser(req, res, next) {
   return res.status(200).json({ token: req.token, userInfo: user });
 }
 export async function findKakaoUser(req, res, next) {
-  console.log(req, req.userId, req.userInfo, req.query.kakaoId, "11111");
   const user = await userRepository.findByKakaoId(req.query.kakaoId);
   if (!user) {
     return res.status(200).json({ userInfo: { userId: null } });

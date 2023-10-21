@@ -27,11 +27,6 @@ export async function getReplyFriend(req, res) {
 export async function createFriend(req, res) {
   const { id } = req.params;
   const { requestFriendId, replyFriendId } = req.body;
-  console.log(
-    requestFriendId,
-    replyFriendId,
-    "requestFriendId, replyFriendId, isFriend"
-  );
   const friend = await friendRepository.createFriend(
     requestFriendId,
     replyFriendId
@@ -52,7 +47,6 @@ export async function updateFriend(req, res) {
 }
 export async function deleteFriend(req, res, next) {
   const { id } = req.params;
-  console.log(id, req.image, "@@@@");
   const friend = await friendRepository.getById(id);
   if (!friend) {
     return res.status(404).json({ message: `Tweet not found: ${id}` });
@@ -63,7 +57,6 @@ export async function deleteFriend(req, res, next) {
 }
 //유저랑은 다르게 친구요청이 있는 사용자는 나오지 않도록
 export async function getNotConnectFriend(req, res, next) {
-  console.log(req.userInfo.dataValues.id, "11111");
   const users = await friendRepository.getNotConnectFriend(
     req.query.nickname,
     req.userInfo.dataValues.id

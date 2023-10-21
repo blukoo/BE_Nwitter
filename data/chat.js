@@ -23,15 +23,9 @@ const Chat = sequelize.define("chat", {
   friend1Msg: {
     type: DataTypes.STRING,
     get: function () {
-      console.log(
-        this.getDataValue("friend1Msg"),
-        "this.getDataValue('friend1Msg')"
-      );
       return JSON.parse(this.getDataValue("friend1Msg"));
     },
     set: function (val) {
-      console.log(val, "this.getDataValue('friend1Msg')");
-
       return this.setDataValue("friend1Msg", JSON.stringify(val));
     },
   },
@@ -63,7 +57,6 @@ const ORDER_DESC = {
 };
 
 export async function createChat(friendId, myId) {
-  console.log(friendId, myId);
   return Chat.create({
     friend1Id: myId,
     friend2Id: friendId,
@@ -125,8 +118,6 @@ export async function getChat(friendShipId, friendId, myId) {
 
 
   let friendData = await findFriendShip(friendShipId);
-  console.log(friendData, Friend, "SSSS");
-  console.log(friendData, friendId, ":friendId", myId, "myId");
   return Chat.findOne({
     ...ORDER_DESC,
     where: {
@@ -142,12 +133,11 @@ export async function getChat(friendShipId, friendId, myId) {
       data.dataValues.friend2Info = friendData.replyFriend
     } 
     console.log(data, "ddddd??");
-    return data ?? [];
+    return data ?? {};
   });
 }
 
 export async function updateChat(chatId, myId, msg) {
-  console.log(myId, msg);
   return Chat.findByPk(chatId).then((chatV) => {
     let updateV =
       chatV.friend1Id === myId ? chatV.friend1Msg : chatV.friend2Msg;

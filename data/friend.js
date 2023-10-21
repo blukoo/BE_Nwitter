@@ -58,8 +58,6 @@ export async function getById(id) {
   });
 }
 export async function getFriend(id) {
-  console.log(id, "ddddd");
-  console.log(id, Friend, "ddddd");
   return Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -70,8 +68,6 @@ export async function getFriend(id) {
   });
 }
 export async function findFriendShip(friendShipId) {
-  // console.log(id, "ddddd");
-  // console.log(id, Friend, "ddddd");
   return await Friend.findOne({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -82,8 +78,6 @@ export async function findFriendShip(friendShipId) {
 }
 
 export async function getConnectFriend(id, myId) {
-  console.log(id, "ddddd");
-  console.log(id, myId, "ddddd");
   return await Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -97,7 +91,6 @@ export async function getConnectFriend(id, myId) {
   });
 }
 export async function getRequestFriend(id) {
-  console.log(id, Friend, "ddddd");
   return Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -110,7 +103,6 @@ export async function getRequestFriend(id) {
   });
 }
 export async function getReplyFriend(id) {
-  console.log(id, Friend, "ddddd");
   return Friend.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
@@ -123,11 +115,7 @@ export async function getReplyFriend(id) {
   });
 }
 export async function createFriend(requestFriendId, replyFriendId) {
-  console.log(
-    requestFriendId,
-    replyFriendId,
-    "requestFriend, replyFriend, isFrien11"
-  );
+
   return Friend.create({ requestFriendId, replyFriendId, isFriend: false })
     .then((data) => {
       return data;
@@ -152,7 +140,6 @@ export async function deleteFriend(id) {
     });
 }
 export async function getNotConnectFriend(nickname, myId) {
-  console.log(nickname, "Ssss");
   let users = await User.findAll({
     where: {
       id: { [Op.not]: myId },
@@ -162,7 +149,6 @@ export async function getNotConnectFriend(nickname, myId) {
   let arr = [];
   for (let i = 0; i < users.length; i++) {
     let value = await getConnectFriend(users[i].id, myId);
-    console.log(value, users[i].dataValues, "벨류");
     if (!value.length) {
       arr.push(users[i].dataValues);
     }

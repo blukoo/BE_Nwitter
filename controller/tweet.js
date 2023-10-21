@@ -2,7 +2,6 @@ import * as tweetRepository from "../data/tweet.js";
 import { getSocketIO } from '../connection/socket.js';
 
 export async function getTweets(req, res) {
-  console.log(req.query, "@@@");
   const userId = req.query.userId;
   const data = await (userId
     ? tweetRepository.getAllByUserId(userId)
@@ -20,7 +19,6 @@ export async function getTweet(req, res) {
 }
 export async function createTweet(req, res) {
   const { image, text } = req.body;
-  console.log(image, text);
   const tweet = await tweetRepository.create(text, req.userInfo.id);
   res.status(201).json(tweet);
   getSocketIO().emit('getTweets', tweet);
@@ -28,7 +26,6 @@ export async function createTweet(req, res) {
 export async function updateTweet(req, res) {
   const { id } = req.params;
   const { text, userId } = req.body;
-  // console.log(id, image, text, req.body, "@@@@");
   const tweet = await tweetRepository.getById(id);
   if (!tweet) {
     return res.status(404).json({ message: `Tweet not found : ${id}` });
@@ -46,15 +43,12 @@ export async function updateTweetImage(req, res) {
   if (!tweet) {
     return res.status(404).json({ message: `Tweet not found : ${id}` });
   }
-  console.log(req.file,req.image, req.body.image,req.body.file, "Wwww");
   const updated = await tweetRepository.updateImage(id, `/upload/image/${req.file.filename}`);
   res.status(200).json(updated);
   getSocketIO().emit('getTweets', tweet);
 }
 export async function deleteTweet(req, res, next) {
   const { id } = req.params;
-  // const {  userId } = req.body;
-  console.log(id, req.image, "@@@@");
   const tweet = await tweetRepository.getById(id);
   if (!tweet) {
     return res.status(404).json({ message: `Tweet not found: ${id}` });
