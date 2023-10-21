@@ -1,30 +1,28 @@
 import * as chatRepository from "../data/chat.js";
-import { getSocketIO } from "../connection/socket.js";
+// import { getSocketIO } from "../connection/socket.js";
 
 export async function getChat(req, res) {
-  const { friendId, myId } = req.query;
-  console.log(req.userInfo,"req.userInfo이봐봐봐")
-  const data = await chatRepository.getChat(friendId, myId);
+  const { friendShipId, friendId } = req.query;
+  console.log(req.userInfo.dataValues, "data");
+  console.log(req.dataValues, "data");
+  const data = await chatRepository.getChat(
+    friendShipId,
+    friendId,
+    req.userInfo.dataValues.id
+  );
+  console.log(data, "data");
   res.status(200).json(data);
 }
 export async function createChat(req, res) {
-  const { id } = req.params;
-  const { requestFriendId, replyFriendId } = req.body;
-  console.log(req.userInfo,"req.userInfo이봐봐봐")
-  console.log(
-    requestFriendId,
-    replyFriendId,
-    "requestFriendId, replyFriendId, isFriend"
-  );
-  const friend = await chatRepository.createFriend(
-    requestFriendId,
-    replyFriendId
-  );
-  res.status(201).json(friend);
-  getSocketIO().emit("changedFriend", friend);
+  const { friendId } = req.params;
+  console.log(req.userInfo, "req.userInfo이봐봐봐");
+  console.log(friendId, "friendId");
+  const chat = await chatRepository.createChat(friendId, req.userInfo.id);
+  res.status(201).json(chat);
+  // getSocketIO().emit("changedFriend", friend);
 }
 export async function updateChat(req, res) {
-  console.log(req.userInfo,"req.userInfo이봐봐봐")
+  console.log(req.userInfo, "req.userInfo이봐봐봐");
   const { id } = req.params;
   const { chatId, myId, msg } = req.body;
   const chat = await chatRepository.getById(id);
@@ -33,7 +31,7 @@ export async function updateChat(req, res) {
   }
   const updated = await chatRepository.updateFriend(chatId, myId, msg);
   res.status(200).json(updated);
-  getSocketIO().emit("changedFriend", friend);
+  // getSocketIO().emit("changedFriend", friend);
 }
 export async function deleteChat(req, res, next) {
   const { id } = req.params;
@@ -44,7 +42,7 @@ export async function deleteChat(req, res, next) {
   }
   await chatRepository.deleteFriend(id);
   res.sendStatus(204);
-  getSocketIO().emit("changedFriend", friend);
+  // getSocketIO().emit("changedFriend", friend);
 }
 //유저랑은 다르게 친구요청이 있는 사용자는 나오지 않도록
 export async function getNotConnectFriend(req, res, next) {

@@ -34,7 +34,7 @@ app.use((req, res, next) => {
   res.sendStatus(404);
 });
 app.use((error, req, res, next) => {
-  console.error(error, "err");
+  console.error(error,error.message, "err");
   res.sendStatus(500);
 });
 sequelize.sync().then((client) => {

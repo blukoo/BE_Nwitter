@@ -69,6 +69,17 @@ export async function getFriend(id) {
     },
   });
 }
+export async function findFriendShip(friendShipId) {
+  // console.log(id, "ddddd");
+  // console.log(id, Friend, "ddddd");
+  return await Friend.findOne({
+    ...INCLUDE_USER,
+    ...ORDER_DESC,
+    where: {
+      id: friendShipId,
+    },
+  });
+}
 
 export async function getConnectFriend(id, myId) {
   console.log(id, "ddddd");

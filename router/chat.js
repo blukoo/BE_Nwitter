@@ -5,10 +5,9 @@ import { isAuth } from "../middleware/users.js";
 const router = express.Router();
 router.get("/", isAuth, chatController.getChat);
 // GET /tweets/:id
-router.post("/reply", isAuth, chatController.createChat);
 
 // POST /tweeets
-router.post("/", isAuth, chatController.createChat);
+router.post("/:friendId", isAuth, chatController.createChat);
 
 // PUT /tweets/:id
 router.put("/:id", isAuth, chatController.updateChat);
