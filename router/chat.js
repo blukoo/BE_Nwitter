@@ -7,12 +7,12 @@ router.get("/", isAuth, chatController.getChat);
 // GET /tweets/:id
 
 // POST /tweeets
-router.post("/:friendId", isAuth, chatController.createChat);
+router.post("/", isAuth, chatController.createChat);
 
 // PUT /tweets/:id
-router.put("/:id", isAuth, chatController.updateChat);
+router.put("/:chatId", isAuth, chatController.updateChat);
 
 // DELETE /tweets/:id
-router.delete("/:id", isAuth, chatController.deleteChat);
+router.delete("/:chatId", isAuth, chatController.deleteChat);
 
 export default router;

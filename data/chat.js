@@ -1,6 +1,6 @@
 import SQ from "sequelize";
 import { sequelize } from "../db/database.js";
-import { Friend,findFriendShip } from "./friend.js";
+import { Friend, findFriendShip } from "./friend.js";
 import { User, findByUserId } from "./users.js";
 const DataTypes = SQ.DataTypes;
 const Sequelize = SQ.Sequelize;
@@ -21,22 +21,10 @@ const Chat = sequelize.define("chat", {
     allowNull: false,
   },
   friend1Msg: {
-    type: DataTypes.STRING,
-    get: function () {
-      return JSON.parse(this.getDataValue("friend1Msg"));
-    },
-    set: function (val) {
-      return this.setDataValue("friend1Msg", JSON.stringify(val));
-    },
+    type: DataTypes.JSON,
   },
   friend2Msg: {
-    type: DataTypes.STRING,
-    get: function () {
-      return JSON.parse(this.getDataValue("friend2Msg"));
-    },
-    set: function (val) {
-      return this.setDataValue("friend2Msg", JSON.stringify(val));
-    },
+    type: DataTypes.JSON,
   },
 });
 let friendShipIdData = null;
@@ -60,89 +48,60 @@ export async function createChat(friendId, myId) {
   return Chat.create({
     friend1Id: myId,
     friend2Id: friendId,
-    friend1Msg: "[]",
-    friend2Msg: "[]",
+    friend1Msg: [],
+    friend2Msg: [],
   }).then((data) => {
     return data;
   });
 }
-//  Friend.belongsTo(User, { as: "friend1Info" });
-//  Friend.belongsTo(User, { as: "friend2Info" });
-//  const INCLUDE_USER = {
-//   //  attributes: [
-//     //  "id",
-//      // "isFriend",
-//      // "createdAt",
-//   //  ],
-//    include: [
-//      {
-//        model: User,
-//        attributes: ["id", "nickname"],
-//        as: "friend1Info",
-//      },
-//      {
-//        model: User,
-//        attributes: ["id", "nickname"],
-//        as: "friend2Info",
-//      },
-//    ],
-//  };
-
-// Friend.belongsTo(User, { as: "requestFriend" });
-// Friend.belongsTo(User, { as: "replyFriend" });
-// const INCLUDE_USER = {
-//   attributes: [
-//     "id",
-//     "requestFriendId",
-//     "replyFriendId",
-//     "isFriend",
-//     "createdAt",
-//   ],
-//   include: [
-//     {
-//       model: User,
-//       attributes: ["id", "nickname"],
-//       as: "requestFriend",
-//     },
-//     {
-//       model: User,
-//       attributes: ["id", "nickname"],
-//       as: "replyFriend",
-//     },
-//   ],
-// };
-
-// Friend.belongsTo(User);
-export async function getChat(friendShipId, friendId, myId) {
-  friendShipIdData = friendShipId;
-
-
-  let friendData = await findFriendShip(friendShipId);
-  return Chat.findOne({
-    ...ORDER_DESC,
-    where: {
-      // isFriend: true,
+/**
+ *
+ * @friendShipId : 친구 관계 pk
+ * @friendId : 친구 id
+ * @myId : 내 id
+ * @chatId : chat pk
+ * @description : chatId가 있으면 chat을 그냥 가져오고 아니면 create 는 초기 세팅으로 친구 관계 정보가 필요
+ */
+export async function getChat({ friendShipId, friendId, myId, chatId }) {
+  let whereSentence;
+  let friendData;
+  if (friendShipId) {
+    friendData = await findFriendShip(friendShipId);
+    whereSentence = {
       [Op.and]: [
         { friend1Id: { [Op.or]: [friendId, myId] } },
         { friend2Id: { [Op.or]: [friendId, myId] } },
       ],
-    },
+    };
+  } else {
+    whereSentence = {
+      id: chatId,
+    };
+  }
+  console.log(friendShipId, chatId, whereSentence, "chatId");
+  return Chat.findOne({
+    ...ORDER_DESC,
+    where: whereSentence,
   }).then((data) => {
-    if(data.id){
-      data.dataValues.friend1Info = friendData.requestFriend
-      data.dataValues.friend2Info = friendData.replyFriend
-    } 
-    console.log(data, "ddddd??");
+    console.log(data, "datassssss");
+    if (data && friendData) {
+      data.dataValues.friend1Info = friendData.requestFriend;
+      data.dataValues.friend2Info = friendData.replyFriend;
+      data.friend1Msg = JSON.parse(data.friend1Msg);
+      data.friend2Msg = JSON.parse(data.friend2Msg);
+    }
     return data ?? {};
   });
 }
 
 export async function updateChat(chatId, myId, msg) {
+  console.log(chatId, myId, msg,"chatId, myId, msg")
   return Chat.findByPk(chatId).then((chatV) => {
-    let updateV =
-      chatV.friend1Id === myId ? chatV.friend1Msg : chatV.friend2Msg;
-    updateV = JSON.parse(updateV).push(msg);
-    if (chatV.friend1Id === myId) {
+    let arr = chatV.friend1Id == myId ? chatV.friend1Msg : chatV.friend2Msg;
+    arr = JSON.parse(arr.replace(/^"(.*)"$/, '$1').replace(/\\/g, ''))
+    arr.push(msg)
+    let updateV = arr
+    if (chatV.friend1Id == myId) {
       chatV.friend1Msg = JSON.stringify(updateV);
     } else {
       chatV.friend2Msg = JSON.stringify(updateV);

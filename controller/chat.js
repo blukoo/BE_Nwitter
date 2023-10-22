@@ -4,34 +4,42 @@ import * as chatRepository from "../data/chat.js";
 export async function getChat(req, res) {
   const { friendShipId, friendId } = req.query;
   console.log(req.userInfo.dataValues, "data");
-  const data = await chatRepository.getChat(
+  const data = await chatRepository.getChat({
     friendShipId,
     friendId,
-    req.userInfo.dataValues.id
-  );
+    myId: req.userInfo.dataValues.id,
+  });
   res.status(200).json(data);
 }
 export async function createChat(req, res) {
-  const { friendId } = req.params;
+  const { friendId } = req.body;
   console.log(friendId, "friendId");
   const chat = await chatRepository.createChat(friendId, req.userInfo.id);
   res.status(201).json(chat);
   // getSocketIO().emit("changedFriend", friend);
 }
 export async function updateChat(req, res) {
-  const { id } = req.params;
-  const { chatId, myId, msg } = req.body;
-  const chat = await chatRepository.getById(id);
+  const { chatId } = req.params;
+  const { friendId, message } = req.body;
+  console.log(chatId, "@@@@");
+  const chat = await chatRepository.getChat({
+    chatId
+  }
+  );
   if (!chat) {
     return res.status(404).json({ message: `chat not found : ${id}` });
   }
-  const updated = await chatRepository.updateFriend(chatId, myId, msg);
+  const updated = await chatRepository.updateChat(
+    chatId,
+    req.userInfo.dataValues.id,
+    message
+  );
   res.status(200).json(updated);
   // getSocketIO().emit("changedFriend", friend);
 }
 export async function deleteChat(req, res, next) {
   const { id } = req.params;
-  const friend = await chatRepository.getById(id);
+  const chat = await chatRepository.getChat(id);
   if (!friend) {
     return res.status(404).json({ message: `Tweet not found: ${id}` });
   }

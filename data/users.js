@@ -1,4 +1,4 @@
-import SQ from "sequelize";
+import SQ, { Op } from "sequelize";
 import { sequelize } from "../db/database.js";
 const DataTypes = SQ.DataTypes;
 
@@ -42,7 +42,14 @@ export async function findById(id) {
 export async function findByUserId(userId) {
   return User.findOne({ where: { userId } });
 }
-
+export async function findByNickname(nickname, myId) {
+  return User.findAll({
+    where: {
+      id: { [Op.not]: myId },
+      nickname: { [Op.like]: "%" + nickname + "%" },
+    },
+  });
+}
 export async function findByKakaoId(kakaoId) {
   return User.findOne({ where: { kakaoId } });
 }
