@@ -1,6 +1,5 @@
 import * as chatRepository from "../data/chat.js";
-// import { getSocketIO } from "../connection/socket.js";
-
+import { getSocketIO } from '../connection/socket.js';
 export async function getChat(req, res) {
   const { friendShipId, friendId } = req.query;
   console.log(req.userInfo.dataValues, "data");
@@ -10,6 +9,7 @@ export async function getChat(req, res) {
     myId: req.userInfo.dataValues.id,
   });
   res.status(200).json(data);
+  
 }
 export async function createChat(req, res) {
   const { friendId } = req.body;
@@ -31,10 +31,11 @@ export async function updateChat(req, res) {
   }
   const updated = await chatRepository.updateChat(
     chatId,
-    req.userInfo.dataValues.id,
+    req.userInfo.dataValues,
     message
   );
   res.status(200).json(updated);
+  getSocketIO().emit("getChat",updated);
   // getSocketIO().emit("changedFriend", friend);
 }
 export async function deleteChat(req, res, next) {

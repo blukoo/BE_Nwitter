@@ -20,26 +20,10 @@ const Chat = sequelize.define("chat", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  friend1Msg: {
-    type: DataTypes.JSON,
-  },
-  friend2Msg: {
+  messageList: {
     type: DataTypes.JSON,
   },
 });
-let friendShipIdData = null;
-// Chat.belongsTo(Friend, {
-//   attributes: ["id", "requestFriend", "replyFriend"],
-//   as: "friend1Info",
-//   where: { id: friendShipIdData },
-//   // foreignkey: 'friend1'
-// });
-// Chat.belongsTo(Friend, {
-//   // attributes: ["id"],
-//   as: "friend2Info",
-//   // foreignkey: 'friend22'
-// });
-
 const ORDER_DESC = {
   order: [["createdAt", "DESC"]],
 };
@@ -48,8 +32,7 @@ export async function createChat(friendId, myId) {
   return Chat.create({
     friend1Id: myId,
     friend2Id: friendId,
-    friend1Msg: [],
-    friend2Msg: [],
+    messageList: [],
   }).then((data) => {
     return data;
   });
@@ -67,45 +50,45 @@ export async function getChat({ friendShipId, friendId, myId, chatId }) {
   let friendData;
   if (friendShipId) {
     friendData = await findFriendShip(friendShipId);
-    whereSentence = {
-      [Op.and]: [
-        { friend1Id: { [Op.or]: [friendId, myId] } },
-        { friend2Id: { [Op.or]: [friendId, myId] } },
-      ],
-    };
-  } else {
-    whereSentence = {
-      id: chatId,
-    };
   }
-  console.log(friendShipId, chatId, whereSentence, "chatId");
   return Chat.findOne({
     ...ORDER_DESC,
-    where: whereSentence,
+    where: friendShipId
+      ? {
+          [Op.and]: [
+            { friend1Id: { [Op.or]: [friendId, myId] } },
+            { friend2Id: { [Op.or]: [friendId, myId] } },
+          ],
+        }
+      : {
+          id: chatId,
+        },
   }).then((data) => {
     console.log(data, "datassssss");
-    if (data && friendData) {
-      data.dataValues.friend1Info = friendData.requestFriend;
-      data.dataValues.friend2Info = friendData.replyFriend;
-      data.friend1Msg = JSON.parse(data.friend1Msg);
-      data.friend2Msg = JSON.parse(data.friend2Msg);
+    if (data) {
+      if (friendData) {
+        data.dataValues.friend1Info = friendData.requestFriend;
+        data.dataValues.friend2Info = friendData.replyFriend;
+      }
+      let obj = JSON.parse(
+        data.messageList.replace(/^"(.*)"$/, "$1").replace(/\\/g, "")
+      );
+      console.log(data.messageList, obj, "data.messageList");
+      data.messageList = obj;
+      return data;
     }
-    return data ?? {};
+    return {};
   });
 }
 
-export async function updateChat(chatId, myId, msg) {
-  console.log(chatId, myId, msg,"chatId, myId, msg")
+export async function updateChat(chatId, myInfo, msg) {
+  console.log(chatId, myInfo, msg, "chatId, myId, msg");
   return Chat.findByPk(chatId).then((chatV) => {
-    let arr = chatV.friend1Id == myId ? chatV.friend1Msg : chatV.friend2Msg;
-    arr = JSON.parse(arr.replace(/^"(.*)"$/, '$1').replace(/\\/g, ''))
-    arr.push(msg)
-    let updateV = arr
-    if (chatV.friend1Id == myId) {
-      chatV.friend1Msg = JSON.stringify(updateV);
-    } else {
-      chatV.friend2Msg = JSON.stringify(updateV);
-    }
+    let arr = chatV.messageList;
+    let messageData = { id: myInfo.id, nickname: myInfo.nickname, message: msg };
+    arr = JSON.parse(arr.replace(/^"(.*)"$/, "$1").replace(/\\/g, ""));
+    arr.push(messageData);
+    chatV.messageList = JSON.stringify(arr);
     return chatV.save();
   });
 }
