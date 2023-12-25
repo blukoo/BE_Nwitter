@@ -103,3 +103,7 @@ export async function findKakaoUser(req, res, next) {
   }
   return res.status(200).json({ token: req.token, userInfo: user });
 }
+export async function findNickname(req, res, next) {
+  const users = await userRepository.findByNickname(req.query.nickname,req.userInfo.dataValues.id);
+  return res.status(200).json(users);
+}

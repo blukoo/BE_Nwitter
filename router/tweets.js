@@ -11,7 +11,7 @@ import multer from "multer";
 const fileStorage = multer.diskStorage({
   // 저장 폴더 위치
   destination: (req, file, cb) => {
-    cb(null, "upload/image");
+    cb(null, "upload/tweet/image");
   },
   //파일이름
   filename: (req, file, cb) => {
