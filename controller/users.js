@@ -82,6 +82,16 @@ export async function kakaoSignup(req, res) {
   }
   res.status(201).json({ token, userId });
 }
+
+export async function checkDuplicateId(req, res) {
+  let { userId } = req.query;
+  let found = await userRepository.findByUserId(userId);
+  if (found) {
+    return res.status(200).json({ isExist: true });
+  } else {
+    return res.status(200).json({ isExist: false });
+  }
+}
 export async function me(req, res, next) {
   const user = await userRepository.findById(req.userId);
   if (!user) {
@@ -104,6 +114,9 @@ export async function findKakaoUser(req, res, next) {
   return res.status(200).json({ token: req.token, userInfo: user });
 }
 export async function findNickname(req, res, next) {
-  const users = await userRepository.findByNickname(req.query.nickname,req.userInfo.dataValues.id);
+  const users = await userRepository.findByNickname(
+    req.query.nickname,
+    req.userInfo.dataValues.id
+  );
   return res.status(200).json(users);
 }
