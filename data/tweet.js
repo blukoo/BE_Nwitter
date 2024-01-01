@@ -1,9 +1,11 @@
 import { db } from "../db/database.js";
 import SQ from "sequelize";
 import { sequelize } from "../db/database.js";
-import { User,findByUserId } from "./users.js";
+import { User, findByUserId } from "./users.js";
+import { Friend, getFriend } from "./friend.js";
 const DataTypes = SQ.DataTypes;
 const Sequelize = SQ.Sequelize;
+const Op = Sequelize.Op;
 const Tweet = sequelize.define("tweet", {
   id: {
     type: DataTypes.INTEGER,
@@ -20,6 +22,7 @@ const Tweet = sequelize.define("tweet", {
   },
 });
 Tweet.belongsTo(User);
+Friend.belongsTo(User);
 const INCLUDE_USER = {
   attributes: [
     "id",
@@ -30,14 +33,13 @@ const INCLUDE_USER = {
     [Sequelize.col("user.name"), "name"],
     [Sequelize.col("user.nickname"), "nickname"],
     [Sequelize.col("user.url"), "url"],
-  ], 
+  ],
   include: {
     model: User,
     attributes: [
       // "name",
       // "nickname",
       // "url",
-      
     ],
     // attributes: ["name","nickname"],
     // required: false,
@@ -55,20 +57,37 @@ export async function getAllByNickname(nickname) {
   return Tweet.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
-    include:{ ...INCLUDE_USER.include,
-      where: { nickname } 
-    },
+    include: { ...INCLUDE_USER.include, where: { nickname } },
   });
 }
 export async function getAllByUserId(userId) {
-  const user = new User()
-  
-  let id =(await findByUserId(userId)).dataValues.id;
+  const user = new User();
+
+  let id = (await findByUserId(userId)).dataValues.id;
+  // console.log(Friend,getFriend,userId,"FriendFriend")
+  let friends = await getFriend(id);
+  console.log(friends)
+  friends = friends.map((item) => {
+    return item.requestFriendId === id
+      ? item.replyFriend.userId
+      : item.requestFriend.userId;
+  })
+  console.log(
+    "friend",
+    userId,
+    friends,
+  //   friends.map((item) => {
+  //     return item.requestFriendId === userId
+  //       ? item.replyFriendId
+  //       : item.requestFriendId;
+  //   })
+  );
   return Tweet.findAll({
     ...INCLUDE_USER,
     ...ORDER_DESC,
-    include:{ ...INCLUDE_USER.include,
-      where: { userId }
+    include: {
+      ...INCLUDE_USER.include,
+      where: { userId: { [Op.in]: [userId, ...friends] } },
     },
   });
 }
@@ -76,6 +95,7 @@ export async function getAllByUserId(userId) {
 export async function getTweet() {}
 
 export async function getById(id) {
+  console.log(Friend.getFriend(id), "ididid");
   return Tweet.findOne({
     where: { id },
     ...INCLUDE_USER,
@@ -83,10 +103,12 @@ export async function getById(id) {
 }
 
 // POST /tweeets
-export async function create(text,userId) {
-  return Tweet.create({ text, userId }).then((data) => {
-    return data;
-  }).then(data=>this.getById(data.dataValues.id));
+export async function create(text, userId) {
+  return Tweet.create({ text, userId })
+    .then((data) => {
+      return data;
+    })
+    .then((data) => this.getById(data.dataValues.id));
 }
 
 // PUT /tweets/:id
@@ -113,4 +135,3 @@ export async function remove(id) {
       tweet.destroy();
     });
 }
-

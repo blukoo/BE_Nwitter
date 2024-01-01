@@ -37,12 +37,12 @@ const INCLUDE_USER = {
   include: [
     {
       model: User,
-      attributes: ["id", "nickname"],
+      attributes: ["id", "userId", "nickname"],
       as: "requestFriend",
     },
     {
       model: User,
-      attributes: ["id", "nickname"],
+      attributes: ["id", "userId", "nickname"],
       as: "replyFriend",
     },
   ],
@@ -53,6 +53,7 @@ const ORDER_DESC = {
 };
 Friend.belongsTo(User);
 export async function getById(id) {
+  console.log(Friend.getFriend(id), "ididid111");
   return Friend.findOne({
     where: { id },
   });
@@ -115,7 +116,6 @@ export async function getReplyFriend(id) {
   });
 }
 export async function createFriend(requestFriendId, replyFriendId) {
-
   return Friend.create({ requestFriendId, replyFriendId, isFriend: false })
     .then((data) => {
       return data;
