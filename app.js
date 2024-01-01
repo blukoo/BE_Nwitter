@@ -28,7 +28,7 @@ app.use(
 app.use("/tweets", tweetsRoute);
 app.use("/users", usersRoute);
 app.use("/friend", friendRoute);
-app.use("/upload/image/", express.static("upload/image/"));
+app.use("/upload/tweet/image/", express.static("upload/tweet/image/"));
 app.use("/chat", chatRoute);
 app.use((req, res, next) => {
   res.sendStatus(404);

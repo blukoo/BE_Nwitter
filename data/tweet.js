@@ -95,7 +95,7 @@ export async function getAllByUserId(userId) {
 export async function getTweet() {}
 
 export async function getById(id) {
-  console.log(Friend.getFriend(id), "ididid");
+  // console.log(Friend.getFriend(id), "ididid");
   return Tweet.findOne({
     where: { id },
     ...INCLUDE_USER,

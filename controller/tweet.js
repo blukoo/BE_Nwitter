@@ -44,7 +44,7 @@ export async function updateTweetImage(req, res) {
   if (!tweet) {
     return res.status(404).json({ message: `Tweet not found : ${id}` });
   }
-  const updated = await tweetRepository.updateImage(id, `/upload/image/${req.file.filename}`);
+  const updated = await tweetRepository.updateImage(id, `/upload/tweet/image/${req.file.filename}`);
   res.status(200).json(updated);
   getSocketIO().emit('getTweets', tweet);
 }

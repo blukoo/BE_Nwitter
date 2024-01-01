@@ -21,7 +21,7 @@ const fileStorage = multer.diskStorage({
     cb(null, true);
   },
 });
-const upload = multer({ dest: "./upload/image", storage: fileStorage });
+const upload = multer({ dest: "./upload/tweet/image", storage: fileStorage });
 const validateTweet = [
   body("text")
     .trim()
